@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CorpFlow - Gestão de Tarefas</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <header class="bg-blue-800 text-white p-4">
+    <h1 class="text-2xl font-bold">CorpFlow</h1>
+    <p class="text-sm">Interface visual para gestão de tarefas</p>
+  </header>  <main class="p-6" x-data="taskFlow()">
+    <section class="mb-6">
+      <h2 class="text-xl font-semibold mb-2">Fluxo de Tarefas</h2>
+      <div class="grid grid-cols-3 gap-4">
+        <template x-for="(block, index) in blocks" :key="index">
+          <div class="bg-white shadow p-4 rounded border border-gray-200">
+            <label class="block text-sm font-medium mb-1">Tipo:</label>
+            <select class="w-full border p-1" x-model="block.type">
+              <option value="acao">Ação</option>
+              <option value="condicao">Condição</option>
+              <option value="decisao">Decisão</option>
+            </select><label class="block text-sm font-medium mt-2 mb-1">Descrição:</label>
+        <input type="text" class="w-full border p-1" x-model="block.description">
+      </div>
+    </template>
+  </div>
+  <button @click="addBlock" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Adicionar Bloco</button>
+</section>
+
+<section>
+  <button @click="validateFlow" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Validar Fluxo</button>
+  <p x-show="validationMessage" class="mt-2 text-sm font-medium" x-text="validationMessage"></p>
+</section>
+
+  </main>  <script>
+    function taskFlow() {
+      return {
+        blocks: [],
+        validationMessage: '',
+
+        addBlock() {
+          this.blocks.push({ type: 'acao', description: '' });
+        },
+
+        validateFlow() {
+          if (this.blocks.length === 0) {
+            this.validationMessage = 'Nenhum bloco adicionado.';
+            return;
+          }
+
+          for (const block of this.blocks) {
+            if (!block.description.trim()) {
+              this.validationMessage = 'Todos os blocos precisam de uma descrição.';
+              return;
+            }
+          }
+
+          const hasDecision = this.blocks.some(b => b.type === 'decisao');
+          const hasAction = this.blocks.some(b => b.type === 'acao');
+
+          if (!hasAction || !hasDecision) {
+            this.validationMessage = 'O fluxo deve conter ao menos uma Ação e uma Decisão.';
+          } else {
+            this.validationMessage = 'Fluxo válido e pronto para execução.';
+          }
+        }
+      }
+    }
+  </script></body>
+</html>
