@@ -6,6 +6,9 @@ Sistema de Gerenciamento de Fluxos de Trabalho.
 
 Este projeto foi desenvolvido como trabalho A3 para a disciplina de Teoria da Computação e Compiladores da faculdade IBMR.
 
+### Prints da aplicação em funcionamento:
+<img width="977" alt="Screenshot 2025-05-24 at 12 16 38" src="https://github.com/user-attachments/assets/45ded549-fe1d-4fb9-87c1-7089afd47cea" />
+
 ### Equipe
 - Lorena Assis de Souza da Silva
 - Mauricio de Oliveira Pereira Junior
@@ -99,5 +102,5 @@ node server.js
 
 Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
 
-### Prints da aplicação em funcionamento:
-<img width="977" alt="Screenshot 2025-05-24 at 12 16 38" src="https://github.com/user-attachments/assets/e2b618d7-5dcf-42be-aa2d-6b11a8af96e9" />
+
+
