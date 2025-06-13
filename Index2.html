@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CorpFlow - Gestão de Tarefas</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <header class="bg-blue-800 text-white p-4">
+    <h1 class="text-2xl font-bold">CorpFlow</h1>
+    <p class="text-sm">Interface visual para gestão de tarefas</p>
+  </header>
+
+  <main class="p-6" x-data="taskFlow()">
+
+    <h2 class="text-xl font-semibold mb-4">Fluxo de Tarefas (Arraste para organizar)</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <template x-for="(block, index) in blocks" :key="index">
+        <div class="bg-white shadow p-4 rounded border border-gray-200">
+
+          <!-- Tipo -->
+          <label class="block text-sm font-medium mb-1">Tipo:</label>
+          <select class="w-full border p-1 mb-2" x-model="block.type">
+            <option value="acao">Ação</option>
+            <option value="condicao">Condição</option>
+            <option value="decisao">Decisão</option>
+          </select>
+
+          <!-- Descrição -->
+          <label class="block text-sm font-medium mt-2 mb-1">Descrição:</label>
+          <input type="text" class="w-full border p-1 mb-2" x-model="block.description" />
+
+          <!-- Prazo -->
+          <label class="block text-sm font-medium mt-2 mb-1">Prazo (yyyy-mm-dd):</label>
+          <input type="text" class="w-full border p-1 mb-2" x-model="block.deadline" />
+
+          <!-- Erro -->
+          <template x-if="block.error">
+            <p class="text-sm text-red-600 mt-1" x-text="block.error"></p>
+          </template>
+
+        </div>
+      </template>
+    </div>
+
+    <!-- Botão: Adicionar Bloco -->
+    <button @click="addBlock" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+      Adicionar Bloco
+    </button>
+
+    <!-- Tipo de usuário -->
+    <section class="mt-6 mb-4">
+      <label class="block font-medium mb-2">Tipo de Usuário:</label>
+      <select x-model="perfilUsuario" class="border p-2 w-full max-w-xs">
+        <option value="colaborador">Colaborador</option>
+        <option value="gerente">Gerente</option>
+      </select>
+    </section>
+
+    <!-- Botão: Validar fluxo -->
+    <section>
+      <button @click="validateFlow" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+        Validar Fluxo
+      </button>
+      <p x-show="validationMessage" class="mt-2 text-sm font-medium text-red-600" x-text="validationMessage"></p>
+    </section>
+
+  </main>
+
+  <script>
+    function taskFlow() {
+      return {
+        blocks: [],
+        validationMessage: '',
+        perfilUsuario: 'colaborador',
+
+        addBlock() {
+          this.blocks.push({ type: 'acao', description: '', deadline: '', error: '' });
+        },
+
+        validateFlow() {
+          this.validationMessage = '';
+
+          if (this.blocks.length === 0) {
+            this.validationMessage = 'Nenhum bloco adicionado.';
+            return;
+          }
+
+          let hasAction = false;
+          let hasDecision = false;
+          let valid = true;
+
+          for (const block of this.blocks) {
+            block.error = '';
+
+            if (!block.description.trim()) {
+              block.error = 'A descrição é obrigatória.';
+              valid = false;
+            }
+
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(block.deadline)) {
+              block.error = 'O prazo deve estar no formato yyyy-mm-dd.';
+              valid = false;
+            }
+
+            if (block.type === 'acao') hasAction = true;
+            if (block.type === 'decisao') hasDecision = true;
+          }
+
+          if (!valid) {
+            this.validationMessage = 'Corrija os erros nos blocos.';
+            return;
+          }
+
+          if (!hasAction || !hasDecision) {
+            this.validationMessage = 'O fluxo deve conter pelo menos uma Ação e uma Decisão.';
+            return;
+          }
+
+          if (this.perfilUsuario === 'gerente') {
+            const senha = prompt("Confirme sua senha:");
+            if (senha !== '1234') {
+              this.validationMessage = 'Senha incorreta. Ação bloqueada.';
+              return;
+            } else {
+              this.validationMessage = 'Fluxo validado com sucesso. Aprovado pelo gerente.';
+            }
+          } else {
+            this.validationMessage = 'Fluxo validado com sucesso.';
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
